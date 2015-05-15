@@ -1,0 +1,4 @@
+Rules with Dictionary<string, object> instead of OO for:
+	- Flexibililty
+	- Cleaner JSon
+	- There's not logic on server side anyway
