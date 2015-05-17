@@ -12,8 +12,39 @@ namespace Server_Data {
         [JsonProperty]
         public Dictionary<string, object> Properties;
 
-        public Rule() {
+        [JsonIgnore]
+        public HashSet<RuleTemplate> Templates;
+
+        [JsonProperty]
+        public IEnumerable<string> RuleTypeNames {
+            get {
+                return Templates.Select(rt => rt.Name);
+            }
+        }
+
+        public Rule(RuleTemplate template = null)
+            : this((template == null) ? null : new RuleTemplate[] { template }) {
+        }
+
+        public Rule(IEnumerable<RuleTemplate> templates) {
             Properties = new Dictionary<string, object>();
+            if (templates == null) {
+                Templates = new HashSet<RuleTemplate>();
+            } else {
+                Templates = new HashSet<RuleTemplate>(templates);
+            }
+        }
+
+        public bool IsValid() {
+            return Templates.All(rt => rt.IsValid(Properties));
+        }
+
+        [JsonConstructor]
+        private Rule(IEnumerable<string> ruleTypeNames) {
+            Templates = new HashSet<RuleTemplate>();
+            foreach (string ruleTypeName in ruleTypeNames) {
+                Templates.Add(RuleTemplate.GetByName(ruleTypeName));
+            }
         }
     }
 }

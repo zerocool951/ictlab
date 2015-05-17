@@ -17,6 +17,9 @@ namespace Server_Data {
         //Must be 32 Bytes, 16 chars
         private static readonly byte[] salt = Encoding.ASCII.GetBytes("b9ekyysopf7t0cam");
 
+        /// <summary>
+        /// Encrypts a string using Rijndael's algorithm. Can only be decrypted by this class because salt stored here.
+        /// </summary>
         public static string Encrypt(string text, string key) {
             byte[] textToBytes = Encoding.UTF8.GetBytes(text);
             using (var password = new PasswordDeriveBytes(key, null)) {
@@ -37,6 +40,9 @@ namespace Server_Data {
             }
         }
 
+        /// <summary>
+        /// Decrypts a string encrypted by this class.
+        /// </summary>
         public static string Decrypt(string text, string key) {
             byte[] textToBytes = Convert.FromBase64String(text);
             using (PasswordDeriveBytes password = new PasswordDeriveBytes(key, null)) {
