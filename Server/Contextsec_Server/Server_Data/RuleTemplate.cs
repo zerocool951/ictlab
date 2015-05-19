@@ -10,9 +10,32 @@ namespace Server_Data {
 
         public static HashSet<RuleTemplate> RuleTemplates = new HashSet<RuleTemplate>() {
             new RuleTemplate("Empty", null),
-            new RuleTemplate("Basic", new Dictionary<string,Type>() { { "Id", typeof(int) } }),
-            new RuleTemplate("Application", new Dictionary<string,Type>() { { "Application", typeof(string) } })
+
+            new RuleTemplate("Basic", new Dictionary<string,Type>() {
+                { "Id", typeof(long) },
+                { "Name", typeof(string)}},
+                (r) => CalcDisplayName(r, "Name")),
+
+            new RuleTemplate("Application", new Dictionary<string,Type>() {
+                { "Application", typeof(string) } },
+                (r) => CalcDisplayName(r, "Application"))
         };
+
+        private static string CalcDisplayName(Rule rule, string key) {
+            object val = null;
+            if (rule.Properties.TryGetValue(key, out val)) {
+                if (val != null) {
+                    return val.ToString();
+                }
+            }
+            return "Rule";
+        }
+
+        public static string[] AllTemplateNames {
+            get {
+                return RuleTemplates.Select(rt => rt.Name).ToArray();
+            }
+        }
 
         /// <summary>
         /// Get a Rule template by its name
@@ -24,21 +47,29 @@ namespace Server_Data {
         }
 
         public readonly string Name;
-        private readonly IReadOnlyDictionary<string, Type> RequiredProperties;
+        public readonly Func<Rule, string> GetDisplayName;
+        public readonly IReadOnlyDictionary<string, Type> RequiredProperties;
 
-        private RuleTemplate(string name, Dictionary<string, Type> requiredProperties) {
+        private RuleTemplate(string name, Dictionary<string, Type> requiredProperties)
+            : this(name, requiredProperties, (r) => null) {
+        }
+
+        private RuleTemplate(string name, Dictionary<string, Type> requiredProperties, Func<Rule, string> getDisplayName) {
             if (requiredProperties == null) {
                 requiredProperties = new Dictionary<string, Type>();
             }
+
             RequiredProperties = new ReadOnlyDictionary<string, Type>(requiredProperties);
 
             Name = name;
+            GetDisplayName = getDisplayName;
         }
 
         public bool IsValid(Dictionary<string, object> properties) {
             foreach (KeyValuePair<string, Type> required in RequiredProperties) {
                 if (properties.ContainsKey(required.Key)) {
                     object value = properties[required.Key];
+
                     if (value == null)
                         return false;
 

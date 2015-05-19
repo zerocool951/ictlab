@@ -12,9 +12,6 @@ namespace Server_Data {
         [JsonProperty]
         public Dictionary<string, object> Properties;
 
-        [JsonIgnore]
-        public HashSet<RuleTemplate> Templates;
-
         [JsonProperty]
         public IEnumerable<string> RuleTypeNames {
             get {
@@ -22,11 +19,30 @@ namespace Server_Data {
             }
         }
 
-        public Rule(RuleTemplate template = null)
-            : this((template == null) ? null : new RuleTemplate[] { template }) {
+        [JsonIgnore]
+        private HashSet<RuleTemplate> Templates;
+
+        [JsonIgnore]
+        public string DisplayName {
+            get {
+                foreach (RuleTemplate rt in Templates) {
+                    string name = rt.GetDisplayName(this);
+                    if (name != null) {
+                        return name;
+                    }
+                }
+                return "Rule";
+            }
         }
 
-        public Rule(IEnumerable<RuleTemplate> templates) {
+        [JsonIgnore]
+        public bool IsValid {
+            get {
+                return Templates.All(rt => rt.IsValid(Properties));
+            }
+        }
+
+        public Rule(params RuleTemplate[] templates) {
             Properties = new Dictionary<string, object>();
             if (templates == null) {
                 Templates = new HashSet<RuleTemplate>();
@@ -35,16 +51,22 @@ namespace Server_Data {
             }
         }
 
-        public bool IsValid() {
-            return Templates.All(rt => rt.IsValid(Properties));
+        [JsonConstructor]
+        private Rule(IEnumerable<string> ruleTypeNames)
+            : this(GetTemplatesByName(ruleTypeNames)) {
         }
 
-        [JsonConstructor]
-        private Rule(IEnumerable<string> ruleTypeNames) {
-            Templates = new HashSet<RuleTemplate>();
-            foreach (string ruleTypeName in ruleTypeNames) {
-                Templates.Add(RuleTemplate.GetByName(ruleTypeName));
+        private static RuleTemplate[] GetTemplatesByName(IEnumerable<string> templateNames) {
+            var templates = new HashSet<RuleTemplate>();
+            foreach (string ruleTypeName in templateNames) {
+                templates.Add(RuleTemplate.GetByName(ruleTypeName));
             }
+
+            return templates.ToArray();
+        }
+
+        public IEnumerable<RuleTemplate> GetTemplates() {
+            return Templates.AsEnumerable();
         }
     }
 }

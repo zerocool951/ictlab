@@ -24,8 +24,7 @@ namespace Contextsec_Server_UnitTest {
             RuleStore newStore = RuleStore.Create(fileLoc, key);
 
             newStore.Rules.Add(
-                new Rule() {
-                    Templates = new HashSet<RuleTemplate>() { RuleTemplate.GetByName(templateName) },
+                new Rule(RuleTemplate.GetByName(templateName)) {
                     Properties = new Dictionary<string, object>() {
                         { saveKey, saveValue },
                         { "key2", 1 }
@@ -37,7 +36,30 @@ namespace Contextsec_Server_UnitTest {
             var readStore = RuleStore.Open(fileLoc, key);
 
             Assert.AreEqual(saveValue, readStore.Rules.First().Properties[saveKey]);
-            Assert.IsTrue(readStore.Rules.First().Templates.First().Name == templateName);
+            Assert.IsTrue(readStore.Rules.First().GetTemplates().First().Name == templateName);
+
+            File.Delete(fileLoc);
+        }
+
+        [TestMethod]
+        public void TestRuleTemplateStore() {
+            string fileLoc = "Unittest.json";
+            string key = "password123";
+
+            if (File.Exists(fileLoc)) {
+                File.Delete(fileLoc);
+            }
+
+            RuleStore newStore = RuleStore.Create(fileLoc, key);
+            Rule rule = new Rule(RuleTemplate.GetByName("Basic"), RuleTemplate.GetByName("Application"));
+
+            newStore.Rules.Add(rule);
+            newStore.WriteToDisc();
+
+            var readStore = RuleStore.Open(fileLoc, key);
+            Assert.IsTrue(readStore.Rules.First().GetTemplates().Count() == 2);
+            Assert.IsTrue(readStore.Rules.First().GetTemplates().FirstOrDefault(rt => rt.Name == "Basic") != null);
+            Assert.IsTrue(readStore.Rules.First().GetTemplates().FirstOrDefault(rt => rt.Name == "Application") != null);
 
             File.Delete(fileLoc);
         }
@@ -54,25 +76,22 @@ namespace Contextsec_Server_UnitTest {
 
             Rule valid = new Rule(type);
             valid.Properties.Add("test", null);
+            valid.Properties.Add("Name", "someName");
             valid.Properties.Add("Id", 1); //Valid because required prop is set and is of the right type
 
             Assert.IsTrue(inValid1.RuleTypeNames.Contains("Basic"));
-            Assert.IsFalse(inValid1.IsValid());
-            Assert.IsFalse(inValid2.IsValid());
-            Assert.IsFalse(inValid3.IsValid());
-            Assert.IsTrue(valid.IsValid());
+            Assert.IsFalse(inValid1.IsValid);
+            Assert.IsFalse(inValid2.IsValid);
+            Assert.IsFalse(inValid3.IsValid);
+            Assert.IsTrue(valid.IsValid);
 
             //Tests case insensitivity and duplicate detection
-            Rule multiple = new Rule(new RuleTemplate[] { RuleTemplate.GetByName("bASIC"), RuleTemplate.GetByName("Application"), RuleTemplate.GetByName("Basic") }) {
-                Properties = new Dictionary<string, object>() { { "Id", 1 } }
+            Rule multiple = new Rule(RuleTemplate.GetByName("bASIC"), RuleTemplate.GetByName("Application"), RuleTemplate.GetByName("Basic")) {
+                Properties = new Dictionary<string, object>() { { "Id", 1 }, { "Name", "someName" } }
             };
-            Assert.IsFalse(multiple.IsValid());
+            Assert.IsFalse(multiple.IsValid);
             multiple.Properties.Add("Application", "testApplication");
-            Assert.IsTrue(multiple.IsValid());
-        }
-
-        [TestMethod]
-        public void Test() {
+            Assert.IsTrue(multiple.IsValid);
         }
     }
 }

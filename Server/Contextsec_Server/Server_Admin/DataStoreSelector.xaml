@@ -1,0 +1,18 @@
+﻿<Window x:Class="Server_Admin.DataStoreSelector"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="DataStoreSelector" Height="153" Width="300" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <StackPanel Orientation="Vertical" Margin="4">
+            <StackPanel Orientation="Horizontal">
+                <Label Content="File:" />
+                <Button x:Name="Bt_New" Content="New" Click="Bt_New_Click" Margin="0, 0, 10, 0" />
+                <Button x:Name="Bt_Open" Content="Open" Click="Bt_Open_Click" Margin="0, 0, 10, 0" />
+                <Label x:Name="Lb_File" />
+            </StackPanel>
+            <Label Content="Key:" />
+            <PasswordBox x:Name="Pb_Key" Margin="0,0,0,10" />
+            <Button x:Name="Bt_Ready" IsEnabled="False" Content="Ready" Click="Bt_Ready_Click" />
+        </StackPanel>
+    </Grid>
+</Window>
