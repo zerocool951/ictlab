@@ -43,10 +43,15 @@ namespace Server_Data {
         /// <param name="name">NOT case sensitive</param>
         /// <returns>Found object, or null if not found</returns>
         public static RuleTemplate GetByName(string name) {
-            return RuleTemplates.FirstOrDefault(rt => rt.Name.ToLower() == name.ToLower());
+            if (name != null) {
+                return RuleTemplates.FirstOrDefault(rt => rt.Name.ToLower() == name.ToLower());
+            } else {
+                return null;
+            }
         }
 
-        public readonly string Name;
+        public string Name { get; private set; }
+
         public readonly Func<Rule, string> GetDisplayName;
         public readonly IReadOnlyDictionary<string, Type> RequiredProperties;
 
@@ -88,6 +93,13 @@ namespace Server_Data {
 
         public int GetHashCode(RuleTemplate obj) {
             return Name.ToLower().GetHashCode();
+        }
+    }
+
+    public static class TemplateExtensions {
+
+        public static Type GetTypeByKey(this IEnumerable<RuleTemplate> templates, string key) {
+            return templates.SelectMany(rt => rt.RequiredProperties).FirstOrDefault(kvp => kvp.Key == key).Value;
         }
     }
 }

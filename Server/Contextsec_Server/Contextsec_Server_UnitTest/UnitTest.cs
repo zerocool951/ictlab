@@ -36,7 +36,7 @@ namespace Contextsec_Server_UnitTest {
             var readStore = RuleStore.Open(fileLoc, key);
 
             Assert.AreEqual(saveValue, readStore.Rules.First().Properties[saveKey]);
-            Assert.IsTrue(readStore.Rules.First().GetTemplates().First().Name == templateName);
+            Assert.IsTrue(readStore.Rules.First().Templates.First().Name == templateName);
 
             File.Delete(fileLoc);
         }
@@ -57,9 +57,9 @@ namespace Contextsec_Server_UnitTest {
             newStore.WriteToDisc();
 
             var readStore = RuleStore.Open(fileLoc, key);
-            Assert.IsTrue(readStore.Rules.First().GetTemplates().Count() == 2);
-            Assert.IsTrue(readStore.Rules.First().GetTemplates().FirstOrDefault(rt => rt.Name == "Basic") != null);
-            Assert.IsTrue(readStore.Rules.First().GetTemplates().FirstOrDefault(rt => rt.Name == "Application") != null);
+            Assert.IsTrue(readStore.Rules.First().Templates.Count() == 2);
+            Assert.IsTrue(readStore.Rules.First().Templates.FirstOrDefault(rt => rt.Name == "Basic") != null);
+            Assert.IsTrue(readStore.Rules.First().Templates.FirstOrDefault(rt => rt.Name == "Application") != null);
 
             File.Delete(fileLoc);
         }
@@ -77,7 +77,7 @@ namespace Contextsec_Server_UnitTest {
             Rule valid = new Rule(type);
             valid.Properties.Add("test", null);
             valid.Properties.Add("Name", "someName");
-            valid.Properties.Add("Id", 1); //Valid because required prop is set and is of the right type
+            valid.Properties.Add("Id", 1L); //Valid because required prop is set and is of the right type
 
             Assert.IsTrue(inValid1.RuleTypeNames.Contains("Basic"));
             Assert.IsFalse(inValid1.IsValid);
@@ -87,7 +87,7 @@ namespace Contextsec_Server_UnitTest {
 
             //Tests case insensitivity and duplicate detection
             Rule multiple = new Rule(RuleTemplate.GetByName("bASIC"), RuleTemplate.GetByName("Application"), RuleTemplate.GetByName("Basic")) {
-                Properties = new Dictionary<string, object>() { { "Id", 1 }, { "Name", "someName" } }
+                Properties = new Dictionary<string, object>() { { "Id", 1L }, { "Name", "someName" } }
             };
             Assert.IsFalse(multiple.IsValid);
             multiple.Properties.Add("Application", "testApplication");

@@ -17,7 +17,21 @@ using System.Windows.Shapes;
 namespace Server_Admin {
     public partial class MainWindow : Window {
         private RuleStore Store;
-        private bool StoreChanged = true;
+        private bool storeChanged = false;
+
+        private bool StoreChanged {
+            get {
+                return storeChanged;
+            }
+            set {
+                storeChanged = value;
+                if (storeChanged) {
+                    Bt_Save.IsEnabled = true;
+                } else {
+                    Bt_Save.IsEnabled = false;
+                }
+            }
+        }
 
         public MainWindow(RuleStore store) {
             InitializeComponent();
@@ -52,52 +66,82 @@ namespace Server_Admin {
         }
 
         private void Lv_RulesOverview_SelectionChanged(object sender, SelectionChangedEventArgs e) {
-            if (e.AddedItems.Count > 0) {
-                Rule selected = e.AddedItems[0] as Rule;
-                if (selected != null) {
-                    Lv_RuleDetail.ItemsSource = selected.Properties;
-                }
-            } else {
-                Lv_RuleDetail.ItemsSource = null;
-            }
+            UpdateLists();
         }
 
         private void Bt_NewRule_Click(object sender, RoutedEventArgs e) {
-            Rule newRule = new Rule(RuleTemplate.GetByName("Basic"));
-            Rule FilledRule = UserFillEmptyProperties(newRule);
+            Rule newRule = new Rule();
 
-            if (FilledRule != null) {
-                Store.Rules.Add(FilledRule);
-                Lv_RulesOverview.Items.Refresh();
-                StoreChanged = true;
-            }
+            Store.Rules.Add(newRule);
+            StoreChanged = true;
+            UpdateLists();
         }
 
         private void Bt_DelRule_Click(object sender, RoutedEventArgs e) {
             Rule rule = Lv_RulesOverview.SelectedItem as Rule;
             if (rule != null) {
                 Store.Rules.Remove(rule);
-                Lv_RulesOverview.Items.Refresh();
                 StoreChanged = true;
+                UpdateLists();
             }
         }
 
-        private Rule UserFillEmptyProperties(Rule rule) {
-            foreach (KeyValuePair<string, Type> kvp in rule.GetTemplates().SelectMany(t => t.RequiredProperties)) {
-                string key = kvp.Key;
-                Type type = kvp.Value;
+        private void Cb_RuleTemplate_Checkchanged(object sender, RoutedEventArgs e) {
+            CheckBox checkBox = sender as CheckBox;
+            RuleTemplate curTemplate = RuleTemplate.GetByName(checkBox.Content as string);
+            Rule selectedRule = Lv_RulesOverview.SelectedItem as Rule;
 
-                var dialog = new UserInputWindow(key, type);
+            if (curTemplate != null && selectedRule != null && checkBox.IsChecked != null) {
+                bool hasTemplate = checkBox.IsChecked.Value;
+
+                if (hasTemplate) {
+                    selectedRule.Templates.Add(curTemplate);
+                    selectedRule.CreateTemplateProperties();
+                } else {
+                    foreach (string prop in curTemplate.RequiredProperties.Keys) {
+                        selectedRule.Properties.Remove(prop);
+                    }
+                    selectedRule.Templates.Remove(curTemplate);
+                }
+            }
+            StoreChanged = true;
+            UpdateLists();
+        }
+
+        private void UpdateLists() {
+            Rule selected = Lv_RulesOverview.SelectedItem as Rule;
+            if (selected != null) {
+                Lv_RuleTemplates.ItemsSource = RuleTemplate.RuleTemplates.Select((rt) => {
+                    var check = selected.Templates.Contains(rt);
+                    var name = rt.Name;
+                    return new Tuple<bool, string>(check, name);
+                });
+                Lv_RuleDetail.ItemsSource = selected.Properties;
+            } else {
+                Lv_RuleTemplates.ItemsSource = null;
+                Lv_RuleDetail.ItemsSource = null;
+            }
+            Lv_RulesOverview.Items.Refresh();
+            Lv_RuleDetail.Items.Refresh();
+        }
+
+        private void Bt_RuleValueEdit_Click(object sender, RoutedEventArgs e) {
+            Button bt = sender as Button;
+            Rule selected = Lv_RulesOverview.SelectedItem as Rule;
+            if (selected != null && bt != null && !string.IsNullOrEmpty(bt.Tag as string)) {
+                string key = (string)bt.Tag;
+
+                var dialog = new UserInputWindow(key, selected.Templates.GetTypeByKey(key));
                 if (dialog.ShowDialog() == false) {
                     object gotten = dialog.Value;
                     if (gotten != null) {
-                        rule.Properties[key] = gotten;
-                        continue;
+                        selected.Properties[key] = gotten;
+                        StoreChanged = true;
                     }
                 }
-                return null;
             }
-            return rule;
+
+            UpdateLists();
         }
     }
 }

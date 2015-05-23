@@ -1,7 +1,7 @@
 ﻿<Window x:Class="Server_Admin.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MainWindow" Height="350" Width="525" ResizeMode="NoResize">
+        Title="MainWindow" Height="350" Width="700" ResizeMode="NoResize">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -25,7 +25,11 @@
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="100" />
-                    <ColumnDefinition x:Name="EMPTY" Width="5" />
+                    <!-- Spacing -->
+                    <ColumnDefinition Width="5" />
+                    <ColumnDefinition Width="100" />
+                    <!-- Spacing -->
+                    <ColumnDefinition Width="5" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
@@ -44,24 +48,35 @@
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
-                <ListView Grid.Column="2" x:Name="Lv_RuleDetail">
+                <ListView Grid.Column="2" x:Name="Lv_RuleTemplates">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <CheckBox x:Name="Cb_RuleTemplate" Content="{Binding Item2}" IsChecked="{Binding Item1, Mode=OneWay}" Checked="Cb_RuleTemplate_Checkchanged" Unchecked="Cb_RuleTemplate_Checkchanged" />
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+                <ListView Grid.Column="4" x:Name="Lv_RuleDetail">
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <Grid MinWidth="350">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="100" />
                                     <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="3" />
+                                    <ColumnDefinition Width="20" />
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Grid.Column="0" Text="{Binding Key}" FontWeight="Bold" />
                                 <TextBlock Grid.Column="1" TextWrapping="Wrap" MaxWidth="240" Text="{Binding Value}" />
+                                <Button x:Name="Bt_RuleValueEdit" Tag="{Binding Key}" Grid.Column="3" Height="20" Width="20" Click="Bt_RuleValueEdit_Click">
+                                    <Button.Background>
+                                        <ImageBrush ImageSource="EditValue.png" Stretch="Uniform" />
+                                    </Button.Background>
+                                </Button>
                             </Grid>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
             </Grid>
-        </StackPanel>
-        <StackPanel Grid.Row="2" Orientation="Horizontal">
-            <Button Content="tmp" />
         </StackPanel>
     </Grid>
 </Window>

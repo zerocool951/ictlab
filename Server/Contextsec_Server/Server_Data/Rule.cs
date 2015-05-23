@@ -20,7 +20,7 @@ namespace Server_Data {
         }
 
         [JsonIgnore]
-        private HashSet<RuleTemplate> Templates;
+        public HashSet<RuleTemplate> Templates { get; private set; }
 
         [JsonIgnore]
         public string DisplayName {
@@ -51,6 +51,14 @@ namespace Server_Data {
             }
         }
 
+        public void CreateTemplateProperties() {
+            foreach (string key in Templates.SelectMany(t => t.RequiredProperties.Keys)) {
+                if (!Properties.ContainsKey(key)) {
+                    Properties.Add(key, null);
+                }
+            }
+        }
+
         [JsonConstructor]
         private Rule(IEnumerable<string> ruleTypeNames)
             : this(GetTemplatesByName(ruleTypeNames)) {
@@ -63,10 +71,6 @@ namespace Server_Data {
             }
 
             return templates.ToArray();
-        }
-
-        public IEnumerable<RuleTemplate> GetTemplates() {
-            return Templates.AsEnumerable();
         }
     }
 }

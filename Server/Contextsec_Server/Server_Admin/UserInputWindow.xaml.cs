@@ -51,12 +51,18 @@ namespace Server_Admin {
         private void Window_KeyDown(object sender, KeyEventArgs e) {
             if (e.Key == Key.Enter) {
                 Ready();
+            } else if (e.Key == Key.Escape) {
+                Close();
             }
         }
 
         private void Ready() {
             Value = PrevValue;
             this.Close();
+        }
+
+        private void Bt_Cancel_Click(object sender, RoutedEventArgs e) {
+            Close();
         }
     }
 }
