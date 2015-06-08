@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace Contextsec_Server_UnitTest {
     [TestClass]
-    public class UnitTest {
+    public class StoreTest {
 
         [TestMethod]
         public void TestRuleStore() {
@@ -62,36 +62,6 @@ namespace Contextsec_Server_UnitTest {
             Assert.IsTrue(readStore.Rules.First().Templates.FirstOrDefault(rt => rt.Name == "Application") != null);
 
             File.Delete(fileLoc);
-        }
-
-        [TestMethod]
-        public void TestValidation() {
-            RuleTemplate type = RuleTemplate.GetByName("Basic");
-            Rule inValid1 = new Rule(type); //Invalid because required prop is not present
-            Rule inValid2 = new Rule(type);
-            inValid2.Properties.Add("Id", null); //Invalid because required prop is null
-
-            Rule inValid3 = new Rule(type);
-            inValid3.Properties.Add("Id", 1.1); //Invalid because required prop is wrong type
-
-            Rule valid = new Rule(type);
-            valid.Properties.Add("test", null);
-            valid.Properties.Add("Name", "someName");
-            valid.Properties.Add("Id", 1L); //Valid because required prop is set and is of the right type
-
-            Assert.IsTrue(inValid1.RuleTypeNames.Contains("Basic"));
-            Assert.IsFalse(inValid1.IsValid);
-            Assert.IsFalse(inValid2.IsValid);
-            Assert.IsFalse(inValid3.IsValid);
-            Assert.IsTrue(valid.IsValid);
-
-            //Tests case insensitivity and duplicate detection
-            Rule multiple = new Rule(RuleTemplate.GetByName("bASIC"), RuleTemplate.GetByName("Application"), RuleTemplate.GetByName("Basic")) {
-                Properties = new Dictionary<string, object>() { { "Id", 1L }, { "Name", "someName" } }
-            };
-            Assert.IsFalse(multiple.IsValid);
-            multiple.Properties.Add("Application", "testApplication");
-            Assert.IsTrue(multiple.IsValid);
         }
     }
 }
