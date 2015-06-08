@@ -12,12 +12,15 @@ namespace Server_Data {
             new RuleTemplate("Empty", null),
 
             new RuleTemplate("Basic", new Dictionary<string,Type>() {
-                { "Id", typeof(long) },
-                { "Name", typeof(string)}},
+                    { "Id", typeof(long) },
+                    { "Name", typeof(string)},
+                    { "Group", typeof(string)}
+                },
                 (r) => CalcDisplayName(r, "Name")),
 
             new RuleTemplate("Application", new Dictionary<string,Type>() {
-                { "Application", typeof(string) } },
+                    { "Application", typeof(string) }
+                },
                 (r) => CalcDisplayName(r, "Application"))
         };
 
