@@ -147,6 +147,7 @@ UpgradeLog*.htm
 
 # IntelliJ
 /out/
+/.gradle/
 
 #################
 ## Android
