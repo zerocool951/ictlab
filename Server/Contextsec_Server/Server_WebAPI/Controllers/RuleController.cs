@@ -11,9 +11,9 @@ namespace Server_WebAPI.Controllers {
 
         // GET api/values
         public IEnumerable<Rule> Get() {
-            var gotten = DataHelper.GetRuleStore();
+            var gotten = DataHelper.Instance;
             if (gotten != null) {
-                return gotten.Rules;
+                return gotten.AllRules;
             } else {
                 throw new WebException("No working datastore connected");
             }

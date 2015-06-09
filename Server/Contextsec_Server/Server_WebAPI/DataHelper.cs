@@ -3,21 +3,76 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
-using System.Web;
 
 namespace Server_WebAPI {
-    public static class DataHelper {
+    /// <summary>
+    /// Provides an easy way to interact with a stored rulestore
+    /// Configure this class in Web.config
+    /// </summary>
+    public class DataHelper {
+        private const long DefaultUpdateFrequencyMs = 60000;
+
         private static string StorePath;
         private static string StoreKey;
 
-        private const long DefaultUpdateFrequencyMs = 60000;
+        private long UpdateFrequencyMs;
+        private long LastRulestoreUpdate;
+        
+        private static DataHelper instance;
+        /// <summary>
+        /// Singleton instance of DataHelper class
+        /// Will be null when for some reason unable to open/read DataStore
+        /// </summary>
+        public static DataHelper Instance {
+            get {
+                try {
+                    if (instance == null) {
+                        instance = new DataHelper();
+                    }
 
-        private static long UpdateFrequencyMs;
-        private static long LastRulestoreUpdate;
+                    if (instance.AllRules == null || instance.AllRules.Count() == 0) {
+                        return null;
+                    } else {
+                        return instance;
+                    }
+                } catch {
+                    return null;
+                }
+            }
+        }
 
-        private static RuleStore Store;
+        private Rule[] allRules;
+        /// <summary>
+        /// Provides access to all the rules in configured datastore file
+        /// </summary>
+        public Rule[] AllRules {
+            get {
+                RuleStore openedRuleStore;
+                if ((allRules == null || allRules.Count() == 0
+                    || Environment.TickCount - LastRulestoreUpdate > UpdateFrequencyMs)
+                    && TryCreateStore(out openedRuleStore)) {
+                    allRules = openedRuleStore.Rules.ToArray();
 
-        static DataHelper() {
+                    if (allRules.Count() == 0) {
+                        allRules = null;
+                    }
+                }
+
+                return allRules;
+            }
+        }
+
+        /// <summary>
+        /// Specify the dectyption key for the datastore, key can only be set if the datastore has not yet been opened
+        /// </summary>
+        /// <param name="key">Dectyprion key for datastore file</param>
+        public static void SetKey(string key) {
+            if (Instance == null || Instance.AllRules == null || Instance.allRules.Count() == 0) {
+                StoreKey = key;
+            }
+        }
+
+        private DataHelper() {
             var configPath = ConfigurationManager.AppSettings["StorePath"];
             if (!string.IsNullOrEmpty(configPath)) {
                 StorePath = configPath;
@@ -37,29 +92,19 @@ namespace Server_WebAPI {
             }
         }
 
-        public static RuleStore GetRuleStore() {
-            if (Store == null || Environment.TickCount - LastRulestoreUpdate > UpdateFrequencyMs) {
-                if (!string.IsNullOrEmpty(StorePath) && !string.IsNullOrEmpty(StoreKey)) {
-                    TryCreateStore();
-                }
-            }
-            return Store;
-        }
-
-        private static bool TryCreateStore() {
+        private bool TryCreateStore(out RuleStore ruleStore) {
             try {
-                Store = RuleStore.Open(StorePath, StoreKey);
-                LastRulestoreUpdate = Environment.TickCount;
-                return true;
+                if (!string.IsNullOrEmpty(StorePath) && !string.IsNullOrEmpty(StoreKey)) {
+                    ruleStore = RuleStore.Open(StorePath, StoreKey);
+                    LastRulestoreUpdate = Environment.TickCount;
+                    return true;
+                } else {
+                    ruleStore = null;
+                    return false;
+                }
             } catch {
+                ruleStore = null;
                 return false;
-            }
-        }
-
-        public static void SetKey(string key) {
-            if (Store == null) {
-                StoreKey = key;
-                TryCreateStore();
             }
         }
     }

@@ -15,7 +15,7 @@ namespace Server_WebAPI.Controllers {
 
         public ActionResult PostKey(string key) {
             DataHelper.SetKey(key);
-            if (DataHelper.GetRuleStore() == null) {
+            if (DataHelper.Instance == null) {
                 return Redirect("index?triedkey=1");
             } else {
                 return Redirect("index");

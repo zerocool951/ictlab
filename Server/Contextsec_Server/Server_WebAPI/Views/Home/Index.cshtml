@@ -1,10 +1,10 @@
 ﻿@{
-    var gotten = DataHelper.GetRuleStore();
+    var gotten = DataHelper.Instance;
     bool Working = gotten != null;
     int Loaded = -1;
 
     if (Working) {
-        Loaded = gotten.Rules.Count;
+        Loaded = gotten.AllRules.Count;
     }
 }
 
