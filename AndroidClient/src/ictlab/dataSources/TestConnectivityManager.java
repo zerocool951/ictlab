@@ -1,4 +1,4 @@
-package ictlab;
+package ictlab.dataSources;
 
 import android.net.ConnectivityManager;
 import android.net.DhcpInfo;
@@ -54,8 +54,12 @@ public class TestConnectivityManager  {
 	public void TestConnectivityManager() {
 		// TODO Auto-generated constructor stub
 	
+		
+		
 	// MAC adress Humanreadeble
-	linkAddress.getAddress().toString() ;
+	
+		linkAddress.getAddress().toString() ;
+	
 	linkProperties.getDnsServers() ; 
 /*	
 	vpnService.createConfigurationContext(overrideConfiguration) ; 
@@ -71,11 +75,11 @@ public class TestConnectivityManager  {
 	
 	
 	
-	networkCapabilities.hasCapability(networkCapabilities.NET_CAPABILITY_NOT_VPN);
-	networkCapabilities.hasCapability(networkCapabilities.NET_CAPABILITY_INTERNET);
-	networkCapabilities.hasCapability(networkCapabilities.TRANSPORT_CELLULAR);
-	networkCapabilities.hasCapability(networkCapabilities.TRANSPORT_WIFI);
-	networkCapabilities.hasCapability(networkCapabilities.TRANSPORT_VPN);
+	networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_VPN);
+	networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
+	networkCapabilities.hasCapability(NetworkCapabilities.TRANSPORT_CELLULAR);
+	networkCapabilities.hasCapability(NetworkCapabilities.TRANSPORT_WIFI);
+	networkCapabilities.hasCapability(NetworkCapabilities.TRANSPORT_VPN);
 	
 
 	
