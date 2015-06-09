@@ -9,6 +9,10 @@ namespace Server_Data {
     public class RuleTemplate : IEqualityComparer<RuleTemplate> {
 
         public static HashSet<RuleTemplate> RuleTemplates = new HashSet<RuleTemplate>() {
+            new RuleTemplate("TestTemplate", new Dictionary<string,Type>() {
+                { "TestKey", typeof(int) }
+            }),
+
             new RuleTemplate("Empty", null),
 
             new RuleTemplate("Basic", new Dictionary<string,Type>() {

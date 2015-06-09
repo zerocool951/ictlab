@@ -23,21 +23,20 @@ namespace Contextsec_Server_UnitTest {
         /// </summary>
         [TestMethod]
         public void TestSingleValidation() {
-            RuleTemplate basicRuleTemplate = RuleTemplate.GetByName("Basic");
+            RuleTemplate basicRuleTemplate = RuleTemplate.GetByName("TestTemplate");
             //#1: Invalid because required prop is not present
             Rule inValidRule1 = new Rule(basicRuleTemplate);
             //#2: Invalid because required prop is null
             Rule inValidRule2 = new Rule(basicRuleTemplate);
-            inValidRule2.Properties.Add("Id", null);
+            inValidRule2.Properties.Add("TestKey", null);
             //#3 Invalid because required prop is wrong type
             Rule inValidRule3 = new Rule(basicRuleTemplate);
-            inValidRule3.Properties.Add("Id", 1.1);
+            inValidRule3.Properties.Add("TestKey", 1.1);
 
             //Valid because required prop is set and is of the right type
             Rule validRule = new Rule(basicRuleTemplate);
             validRule.Properties.Add("test", null);
-            validRule.Properties.Add("Name", "someName");
-            validRule.Properties.Add("Id", 1L);
+            validRule.Properties.Add("TestKey", 1);
 
             Assert.IsFalse(inValidRule1.IsValid);
             Assert.IsFalse(inValidRule2.IsValid);
@@ -52,11 +51,10 @@ namespace Contextsec_Server_UnitTest {
         public void TestMultipleValidation() {
             //Tests case insensitivity and duplicate template detection
             Rule multipleTemplateTest = new Rule(
-                    RuleTemplate.GetByName("bASIC"),
-                    RuleTemplate.GetByName("Application"),
-                    RuleTemplate.GetByName("Basic"));
-            multipleTemplateTest.Properties.Add("Id", 1L);
-            multipleTemplateTest.Properties.Add("Name", "SomeName");
+                    RuleTemplate.GetByName("TestTemplate"),
+                    RuleTemplate.GetByName("ApplicaTION"),
+                    RuleTemplate.GetByName("tESTteMPLATE"));
+            multipleTemplateTest.Properties.Add("TestKey", 1);
 
             //The rule is not complete and should be invalid (!IsValid)
             Assert.IsFalse(multipleTemplateTest.IsValid);
