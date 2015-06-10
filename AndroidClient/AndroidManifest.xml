@@ -3,6 +3,8 @@
     android:versionCode="1"
     android:versionName="1.0" >
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <uses-sdk
         android:minSdkVersion="21"
         android:targetSdkVersion="21" />
@@ -21,6 +23,7 @@
             </intent-filter>
         </activity>
 
+        <!-- TODO: According to my IDE the line: [android:name=".TestService"] is not correct -->
         <service
             android:name=".TestService"
             android:exported="false"

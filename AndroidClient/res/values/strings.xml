@@ -7,4 +7,6 @@
     <string name="vpn_connect">Connect</string>
     <string name="vpn_connected">Connected</string>
     <string name="vpn_disconnect">Disconnect</string>
+
+    <string name="rules_webapi_address">http://192.168.2.64:2303</string>
 </resources>
