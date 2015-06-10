@@ -1,4 +1,4 @@
-package vpnservice.com.example.hk.traxvpn;
+package ictlab;
 
 import android.content.Intent;
 import android.net.VpnService;
