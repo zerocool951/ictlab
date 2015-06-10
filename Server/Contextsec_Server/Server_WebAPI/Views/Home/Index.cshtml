@@ -1,0 +1,33 @@
+﻿@{
+    var gotten = DataHelper.Instance;
+    bool Working = gotten != null;
+    int Loaded = -1;
+
+    if (Working) {
+        Loaded = gotten.AllRules.Count();
+    }
+}
+
+<div class="jumbotron">
+    <h1>Contextsec Rule API</h1>
+</div>
+<div class="row">
+    <div class="col-md-4">
+        @if (Request.Params["triedkey"] != null) {
+            <h2>Datastore not set up</h2>
+            @Html.ActionLink("Try again", "");
+        } else {
+            if (Working) {
+                <h2>Rules loaded</h2>
+                <p>Rule count: @Loaded</p>
+            } else {
+                <h2>Rules not loaded</h2>
+                Html.BeginForm("PostKey", "Home");
+                <p>Enter Key:</p>
+                <input type="password" id="Key" name="Key" />
+                <input type="submit" id="PostKey" value="PostKey" />
+                Html.EndForm();
+            }
+        }
+    </div>
+</div>

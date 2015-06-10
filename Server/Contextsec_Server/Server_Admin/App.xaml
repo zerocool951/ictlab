@@ -1,0 +1,7 @@
+﻿<Application x:Class="Server_Admin.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             StartupUri="DataStoreSelector.xaml">
+    <Application.Resources>
+    </Application.Resources>
+</Application>
