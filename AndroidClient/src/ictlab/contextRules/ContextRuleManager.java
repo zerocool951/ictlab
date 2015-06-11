@@ -12,6 +12,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import ictlab.contextRules.model.ApplicationRule;
+import ictlab.contextRules.model.Rule;
 import nl.AndroidClient.ictlab.R;
 
 /**
@@ -22,6 +24,8 @@ public class ContextRuleManager {
     public static GetRuleStatus status = GetRuleStatus.NOTSTARTED;
     public static Exception thrownException;
 
+    private static ArrayList<Rule> allRules;
+
     public static void StartGetRules(Context context) {
         Log.d("ContextSec_RuleMgr", "Start get rules");
         String address = context.getResources().getString(R.string.rules_webapi_address) + "/api/Rule";
@@ -30,6 +34,13 @@ public class ContextRuleManager {
 
     private static void ProcessJSon(String jsonText) {
         Log.d("ContextSec_RuleMgr", "Start processing json");
+
+        if(allRules == null){
+            allRules = new ArrayList<Rule>();
+        }else{
+            allRules.clear();
+        }
+
         try {
             JSONArray jArray = new JSONArray(jsonText);
 
@@ -37,24 +48,46 @@ public class ContextRuleManager {
                 JSONObject cur = jArray.getJSONObject(i);
 
                 JSONArray templates = cur.getJSONArray("RuleTypeNames");
-                ArrayList<String> templateNames = new ArrayList<String>();
+                Boolean containsBasic = false;
+                String templateName = null;
                 for(int j = 0; j < templates.length(); j++){
                     String curStr = templates.getString(j);
                     if(!TextUtils.isEmpty(curStr)){
-                        templateNames.add(curStr);
+                        if(curStr.equals("Basic")){
+                            containsBasic = true;
+                        }else{
+                            templateName = curStr;
+                        }
                     }
                 }
-                Boolean containsBasic = false;
-                String templateName = null;
-                for(String curName : templateNames){
-                    if(curName.equals("Basic")){
-                        containsBasic = true;
-                    }else{
-                        templateName = curName;
+                templateName = (templateName != null) ? templateName : "Basic";
+
+                if(containsBasic){
+                    Rule newRule = null;
+                    try {
+                        switch (templateName) {
+                            case "Basic":
+                                newRule = new Rule();
+                                newRule.fillFromJSon(cur);
+                                break;
+                            case "Application":
+                                newRule = new ApplicationRule();
+                                newRule.fillFromJSon(cur);
+                                break;
+                            default:
+                                break;
+                        }
+                        if(newRule != null) {
+                            allRules.add(newRule);
+                        }
+                    }catch (InvalidRuleJSonException irje){
+                        Log.d("ContextSec_RuleMgr", String.format("Failed to serialize JSon obj from server.\nMissing: %s\n%s", irje.GetMissingJSon(), cur.toString()));
                     }
+                }else{
+                    Log.d("ContextSec_RuleMgr", String.format("Failed to serialize JSon obj from server. It does not have the 'Basic' template.\n%s", cur.toString()));
                 }
             }
-
+            status = GetRuleStatus.SUCCESS;
         } catch (JSONException e) {
             thrownException = e;
             status = GetRuleStatus.ERROR;
