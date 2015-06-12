@@ -7,10 +7,11 @@ import ictlab.contextRules.InvalidRuleJSonException;
 
 /**
  * Created by GWigWam on 11-6-2015.
+ * Rule for a specific application
  */
 public class ApplicationRule extends Rule {
 
-    private String ApplicationName;
+    private String applicationName;
 
     @Override
     public void fillFromJSon(JSONObject jObject) throws InvalidRuleJSonException {
@@ -18,17 +19,24 @@ public class ApplicationRule extends Rule {
 
         try {
             JSONObject properties = jObject.getJSONObject("Properties");
-            ApplicationName = properties.getString("Application");
+            applicationName = properties.getString("Application");
         } catch (JSONException e) {
-            throw new InvalidRuleJSonException("Id / Name");
+            throw new InvalidRuleJSonException("Application");
         }
     }
 
+    @Override
+    public String toString() {
+        return super.toString() +  "\nApplicationRule{" +
+                "applicationName='" + applicationName + '\'' +
+                '}';
+    }
+
     public String getApplicationName() {
-        return ApplicationName;
+        return applicationName;
     }
 
     public void setApplicationName(String applicationName) {
-        ApplicationName = applicationName;
+        this.applicationName = applicationName;
     }
 }

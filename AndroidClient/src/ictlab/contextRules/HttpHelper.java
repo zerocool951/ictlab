@@ -11,12 +11,14 @@ import java.util.Scanner;
 
 /**
  * Created by GWigWam on 10-6-2015.
+ * Gets plain text from an url
  */
 public class HttpHelper {
-    public static String getHttpRequestText(String myUrl) throws IOException {
+    /** Returns plain text String gotten from input url. If url is not reachable/readable throws IOException */
+    public static String getHttpRequestText(String url) throws IOException {
         HttpURLConnection urlConnection = null;
         try {
-            urlConnection = (HttpURLConnection) new URL(myUrl).openConnection();
+            urlConnection = (HttpURLConnection) new URL(url).openConnection();
 
             InputStream in = new BufferedInputStream(urlConnection.getInputStream());
 
