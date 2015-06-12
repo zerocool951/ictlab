@@ -25,7 +25,13 @@ namespace Server_Data {
             new RuleTemplate("Application", new Dictionary<string,Type>() {
                     { "Application", typeof(string) }
                 },
-                (r) => CalcDisplayName(r, "Application"))
+                (r) => CalcDisplayName(r, "Application")),
+
+            new RuleTemplate("Between", new Dictionary<string,Type>() {
+                { "From", typeof(long) },
+                { "Until", typeof(long) }
+            },
+            (r) => string.Format("From: '{0}' 'till: '{1}'", CalcDisplayName(r, "From"), CalcDisplayName(r, "Until")))
         };
 
         private static string CalcDisplayName(Rule rule, string key) {
@@ -35,7 +41,7 @@ namespace Server_Data {
                     return val.ToString();
                 }
             }
-            return "Rule";
+            return string.Format("{0} is empty", key);
         }
 
         public static string[] AllTemplateNames {
