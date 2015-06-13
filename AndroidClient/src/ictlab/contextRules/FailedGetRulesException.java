@@ -7,9 +7,9 @@ package ictlab.contextRules;
  * if there was an error check Exception.getCause()
  */
 public class FailedGetRulesException extends Exception {
-    private RuleManagerStatus managerStatus;
+    private final RuleManagerStatus managerStatus;
 
-    public FailedGetRulesException(RuleManagerStatus curStatus, String detailMessage, Throwable throwable) {
+    FailedGetRulesException(RuleManagerStatus curStatus, String detailMessage, Throwable throwable) {
         super(detailMessage, throwable);
         managerStatus = curStatus;
     }

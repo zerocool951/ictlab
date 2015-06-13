@@ -7,9 +7,7 @@ import android.view.View;
 import android.net.VpnService;
 import android.widget.TextView;
 
-import ictlab.contextRules.ContextRuleManager;
-import ictlab.contextRules.FailedGetRulesException;
-import ictlab.contextRules.model.Rule;
+import ictlab.contextRules.*;
 import nl.AndroidClient.ictlab.R;
 
 

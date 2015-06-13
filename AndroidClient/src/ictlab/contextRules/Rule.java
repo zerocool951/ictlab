@@ -1,9 +1,7 @@
-package ictlab.contextRules.model;
+package ictlab.contextRules;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import ictlab.contextRules.InvalidRuleJSonException;
 
 /**
  * Created by GWigWam on 11-6-2015.
@@ -13,14 +11,14 @@ public abstract class Rule {
     private int id;
     private String name;
 
-    /** Insert JSon gotten from server, if the JSon has the correct properties the object will be filled, otherwise InvalidRuleJSonException is thrown*/
-    public void fillFromJSon(JSONObject jObject) throws InvalidRuleJSonException {
+    /** Insert JSON gotten from server, if the JSON has the correct properties the object will be filled, otherwise InvalidRuleJSONException is thrown*/
+    void fillFromJSON(JSONObject jObject) throws InvalidRuleJSONException {
         try {
             JSONObject properties = jObject.getJSONObject("Properties");
             id = properties.getInt("Id");
             name = properties.getString("Name");
         } catch (JSONException e) {
-            throw new InvalidRuleJSonException("Id / Name");
+            throw new InvalidRuleJSONException("Id / Name");
         }
     }
 

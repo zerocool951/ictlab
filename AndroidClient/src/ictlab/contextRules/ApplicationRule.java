@@ -1,9 +1,6 @@
-package ictlab.contextRules.model;
+package ictlab.contextRules;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import ictlab.contextRules.InvalidRuleJSonException;
+import org.json.*;
 
 /**
  * Created by GWigWam on 11-6-2015.
@@ -14,14 +11,14 @@ public class ApplicationRule extends Rule {
     private String applicationName;
 
     @Override
-    public void fillFromJSon(JSONObject jObject) throws InvalidRuleJSonException {
-        super.fillFromJSon(jObject);
+    void fillFromJSON(JSONObject jObject) throws InvalidRuleJSONException {
+        super.fillFromJSON(jObject);
 
         try {
             JSONObject properties = jObject.getJSONObject("Properties");
             applicationName = properties.getString("Application");
         } catch (JSONException e) {
-            throw new InvalidRuleJSonException("Application");
+            throw new InvalidRuleJSONException("Application");
         }
     }
 

@@ -5,14 +5,9 @@ import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import org.json.*;
 import java.io.IOException;
 import java.util.ArrayList;
-
-import ictlab.contextRules.model.*;
 import nl.AndroidClient.ictlab.R;
 
 /**
@@ -22,8 +17,8 @@ import nl.AndroidClient.ictlab.R;
 public class ContextRuleManager {
     private static final String urlSuffix = "/api/Rule";
 
-    public static RuleManagerStatus status = RuleManagerStatus.NOTSTARTED;
-    public static Exception thrownException;
+    private static RuleManagerStatus status = RuleManagerStatus.NOTSTARTED;
+    private static Exception thrownException;
 
     private static ArrayList<Rule> allRules;
 
@@ -45,8 +40,12 @@ public class ContextRuleManager {
         }
     }
 
-    private static void processJSon(String jsonText) {
-        Log.d("ContextSec_RuleMgr", "Start processing json");
+    public static RuleManagerStatus getStatus() {
+        return status;
+    }
+
+    private static void processJSON(String jsonText) {
+        Log.d("ContextSec_RuleMgr", "Start processing JSON");
 
         if(allRules == null){
             allRules = new ArrayList<>();
@@ -80,28 +79,28 @@ public class ContextRuleManager {
                         switch (templateName) {
                             case "Between":
                                 newRule = new BetweenRule();
-                                newRule.fillFromJSon(cur);
+                                newRule.fillFromJSON(cur);
                                 break;
                             case "Application":
                                 newRule = new ApplicationRule();
-                                newRule.fillFromJSon(cur);
+                                newRule.fillFromJSON(cur);
                                 break;
                             default:
-                                Log.d("ContextSec_RuleMgr", String.format("Failed to serialize JSon obj from server.\nUnknown template: %s\n%s", templateName, cur.toString()));
+                                Log.d("ContextSec_RuleMgr", String.format("Failed to serialize JSON obj from server.\nUnknown template: %s\n%s", templateName, cur.toString()));
                                 break;
                         }
                         if(newRule != null) {
                             allRules.add(newRule);
                         }
-                    }catch (InvalidRuleJSonException irje){
-                        Log.d("ContextSec_RuleMgr", String.format("Failed to serialize JSon obj from server.\nMissing: %s\n%s", irje.GetMissingJSon(), cur.toString()));
+                    }catch (InvalidRuleJSONException irje){
+                        Log.d("ContextSec_RuleMgr", String.format("Failed to serialize JSON obj from server.\nMissing: %s\n%s", irje.GetMissingJSON(), cur.toString()));
                     }
                 }else{
-                    Log.d("ContextSec_RuleMgr", String.format("Failed to serialize JSon obj from server. Does not have required templates (Basic + 1Other)\n%s", cur.toString()));
+                    Log.d("ContextSec_RuleMgr", String.format("Failed to serialize JSON obj from server. Does not have required templates (Basic + 1Other)\n%s", cur.toString()));
                 }
             }
             status = RuleManagerStatus.SUCCESS;
-            Log.d("ContextSec_RuleMgr", String.format("End of processing json, found %d rules.", allRules.size()));
+            Log.d("ContextSec_RuleMgr", String.format("End of processing JSON, found %d rules.", allRules.size()));
         } catch (JSONException e) {
             thrownException = e;
             status = RuleManagerStatus.ERROR;
@@ -115,7 +114,7 @@ public class ContextRuleManager {
             Log.d("ContextSec_RuleMgr", "Do in background started...");
 
             try {
-                String text = null;
+                String text;
                 text = HttpHelper.getHttpRequestText(params[0]);
                 Log.d("ContextSec_RuleMgr", "Gotten Http text");
                 return text;
@@ -131,9 +130,9 @@ public class ContextRuleManager {
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
             if (s != null) {
-                processJSon(s);
+                processJSON(s);
             }else{
-                Log.e("ContextSec_RuleMgr", "Execute try get json text failed, end of operations.");
+                Log.e("ContextSec_RuleMgr", "Execute try get JSON text failed, end of operations.");
             }
         }
     }

@@ -2,17 +2,17 @@ package ictlab.contextRules;
 
 /**
  * Created by GWigWam on 11-6-2015.
- * JSon returned by server cannot be converted into java class from contextRules.model
+ * JSON returned by server cannot be converted into java class from contextRules.model
  */
-public class InvalidRuleJSonException extends Exception {
-    private String requiredJSon;
+class InvalidRuleJSONException extends Exception {
+    private final String requiredJSON;
 
-    public InvalidRuleJSonException(String requiredJSon){
-        this.requiredJSon = requiredJSon;
+    InvalidRuleJSONException(String requiredJSON){
+        this.requiredJSON = requiredJSON;
     }
 
-    /** The required JSon properties to create a valid rule object*/
-    public String GetMissingJSon(){
-        return requiredJSon;
+    /** The required JSON properties to create a valid rule object*/
+    public String GetMissingJSON(){
+        return requiredJSON;
     }
 }
