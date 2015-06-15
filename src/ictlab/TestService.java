@@ -35,31 +35,31 @@ public class TestService extends IntentService {
 	@Override
 	protected void onHandleIntent(Intent intent) {
 		
-				
+		
+		
 		
 		
 		// TODO Auto-generated method stub
 		
-		  Intent workIntent;
-		// Gets data from the incoming Intent
-  //      String dataString = workIntent.getDataString();
+		  // Gets data from the incoming Intent
+        String dataString = workIntent.getDataString();
+        ...
         // Do work here, based on the contents of dataString
 
      // Starts the IntentService
-        //getActivity().startService(mServiceIntent);
+        getActivity().startService(mServiceIntent);
         
         /*
          * Creates a new Intent containing a Uri object
          * BROADCAST_ACTION is a custom Intent action
          */
-
-        /* Intent localIntent =
+        Intent localIntent =
                 new Intent(Constants.BROADCAST_ACTION)
                 // Puts the status into the Intent
                 .putExtra(Constants.EXTENDED_DATA_STATUS, status);
         // Broadcasts the Intent to receivers in this app.
         LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
-*/ 
+
 	}
 
 }
