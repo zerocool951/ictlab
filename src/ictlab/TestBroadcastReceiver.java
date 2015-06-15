@@ -1,5 +1,3 @@
-package ictlab;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -16,8 +14,8 @@ public class TestBroadcastReceiver extends BroadcastReceiver {
 
 	
 	 // Prevents instantiation
- //   private DownloadStateReceiver() {
- //   }
+    private DownloadStateReceiver() {
+    }
 
 	/**
 	 * 

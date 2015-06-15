@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="nl.AndroidClient.ictlab"
+    package="nl.AndroidClient"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -7,33 +7,71 @@
 
     <uses-sdk
         android:minSdkVersion="21"
-        android:targetSdkVersion="21" />
+        android:targetSdkVersion="22" />
 
     <application
-        android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:allowBackup="false"
+        android:icon="@drawable/ic_launcher" >
         <activity
+<<<<<<< HEAD
             android:name="ictlab.MainActivity"
             android:label="@string/app_name" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+=======
+            android:name="ictlab.App"
+            android:icon="@drawable/ic_launcher" >
         </activity>
+
+        <receiver
+            android:name="ictlab.receivers.SystemChangeBroadcastReceiver"
+            android:enabled="true"
+            android:permission="android.permission.RECEIVE_BOOT_COMPLETED" >
+>>>>>>> origin/master
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.net.wifi.STATE_CHANGE" />
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="android.net.wifi.NETWORK_IDS_CHANGED" />
+                <action android:name="android.intent.action.PHONE_STATE" />
+                <action android:name="android.intent.action.PROXY_CHANGE" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name="ictlab.receivers.WifiStateChangeReceiver"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="android.permission.RECEIVE_BOOT_COMPLETED" >
+            <intent-filter>
+                <action android:name="android.net.wifi.STATE_CHANGE" />
+                <action android:name="android.net.wifi.STATE_CHANGE" />
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="android.net.wifi.NETWORK_IDS_CHANGED" />
+                <action android:name="android.intent.action.PHONE_STATE" />
+                <action android:name="android.intent.action.PROXY_CHANGE" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
 
         <!-- TODO: According to my IDE the line: [android:name=".TestService"] is not correct -->
         <service
+<<<<<<< HEAD
             android:name=".TestService"
             android:exported="false"
             android:permission="android.permission.BIND_VPN_SERVICE" >
              <intent-filter>
                 <action android:name="android.intent.action.CALL" />
                 <action android:name="android.net.VpnService" />
+=======
+            android:name="ictlab.receivers.MonitorContextService"
+            android:enabled="true"
+            android:exported="false" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+>>>>>>> origin/master
             </intent-filter>
         </service>
-        
     </application>
 
 </manifest>
