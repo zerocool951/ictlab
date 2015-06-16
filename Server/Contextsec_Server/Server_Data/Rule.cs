@@ -9,9 +9,15 @@ using System.Threading.Tasks;
 namespace Server_Data {
     public class Rule {
 
+        /// <summary>
+        /// Key-value properties of this rule.
+        /// </summary>
         [JsonProperty]
         public Dictionary<string, object> Properties;
 
+        /// <summary>
+        /// List of the templates this rule has, this indicates which keys you can expect in the Properties Dictionary.
+        /// </summary>
         [JsonProperty]
         public IEnumerable<string> RuleTypeNames {
             get {
