@@ -6,9 +6,21 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Server_Data {
+    /// <summary>
+    /// A rule template defines the different rules by what properties they have.
+    /// </summary>
     public class RuleTemplate : IEqualityComparer<RuleTemplate> {
 
-        public static HashSet<RuleTemplate> RuleTemplates = new HashSet<RuleTemplate>() {
+        /// <summary>
+        /// Copy of the all RuleTemplates collection
+        /// </summary>
+        public static RuleTemplate[] RuleTemplates {
+            get {
+                return ruleTemplates.ToArray();
+            }
+        }
+
+        private static ISet<RuleTemplate> ruleTemplates = new HashSet<RuleTemplate>() {
             new RuleTemplate("TestTemplate", new Dictionary<string,Type>() {
                 { "TestKey", typeof(int) }
             }),
@@ -35,19 +47,11 @@ namespace Server_Data {
         };
 
         private static string CalcDisplayName(Rule rule, string key) {
-            object val = null;
-            if (rule.Properties.TryGetValue(key, out val)) {
-                if (val != null) {
-                    return val.ToString();
-                }
+            object value = null;
+            if (rule.Properties.TryGetValue(key, out value) && value != null) {
+                return value.ToString();
             }
             return string.Format("{0} is empty", key);
-        }
-
-        public static string[] AllTemplateNames {
-            get {
-                return RuleTemplates.Select(rt => rt.Name).ToArray();
-            }
         }
 
         /// <summary>
@@ -63,16 +67,26 @@ namespace Server_Data {
             }
         }
 
-        public string Name { get; private set; }
+        /// <summary>
+        /// Name of the Rule, will be used for Rule comparison
+        /// </summary>
+        public readonly string Name;
 
+        /// <summary>
+        /// Function which returns the display name of a input Rule
+        /// </summary>
         public readonly Func<Rule, string> GetDisplayName;
+
+        /// <summary>
+        /// Dictates what properties a rule should have and what type they should have.
+        /// </summary>
         public readonly IReadOnlyDictionary<string, Type> RequiredProperties;
 
-        private RuleTemplate(string name, Dictionary<string, Type> requiredProperties)
+        private RuleTemplate(string name, IDictionary<string, Type> requiredProperties)
             : this(name, requiredProperties, (r) => null) {
         }
 
-        private RuleTemplate(string name, Dictionary<string, Type> requiredProperties, Func<Rule, string> getDisplayName) {
+        private RuleTemplate(string name, IDictionary<string, Type> requiredProperties, Func<Rule, string> getDisplayName) {
             if (requiredProperties == null) {
                 requiredProperties = new Dictionary<string, Type>();
             }
@@ -83,15 +97,17 @@ namespace Server_Data {
             GetDisplayName = getDisplayName;
         }
 
-        public bool IsValid(Dictionary<string, object> properties) {
+        /// <summary>
+        /// Checks if a rule follows this template.
+        /// </summary>
+        /// <param name="rule">The Rule to check for validity</param>
+        /// <returns>True if the rule has all the required properties and they are of the expected Type, otherwise false.</returns>
+        public bool ValidateRule(Rule rule) {
             foreach (KeyValuePair<string, Type> required in RequiredProperties) {
-                if (properties.ContainsKey(required.Key)) {
-                    object value = properties[required.Key];
+                if (rule.Properties.ContainsKey(required.Key)) {
+                    object value = rule.Properties[required.Key];
 
-                    if (value == null)
-                        return false;
-
-                    if (value.GetType() != required.Value)
+                    if (value == null || value.GetType() != required.Value)
                         return false;
                 } else {
                     return false;
@@ -100,6 +116,8 @@ namespace Server_Data {
             return true;
         }
 
+        #region IEqualityComparer
+
         public bool Equals(RuleTemplate x, RuleTemplate y) {
             return x.GetHashCode() == y.GetHashCode();
         }
@@ -107,12 +125,7 @@ namespace Server_Data {
         public int GetHashCode(RuleTemplate obj) {
             return Name.ToLower().GetHashCode();
         }
-    }
 
-    public static class TemplateExtensions {
-
-        public static Type GetTypeByKey(this IEnumerable<RuleTemplate> templates, string key) {
-            return templates.SelectMany(rt => rt.RequiredProperties).FirstOrDefault(kvp => kvp.Key == key).Value;
-        }
+        #endregion IEqualityComparer
     }
 }

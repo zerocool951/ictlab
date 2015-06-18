@@ -8,17 +8,29 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Server_Data {
+    /// <summary>
+    /// Manages the transistion between a file on disc and a collection of Rule objects.
+    /// Handles enctyping -> writing -> reading -> decrypting.
+    /// </summary>
     public class RuleStore {
-        private string Key;
-        private string DataFilePath;
-        public List<Rule> Rules;
-        private static JsonSerializerSettings JSonSettings = new JsonSerializerSettings() { Formatting = Formatting.Indented };
+        private readonly string Key;
+        private readonly string DataFilePath;
+
+        //static readonly instead of const because const initialization only works on string objects
+        private static readonly JsonSerializerSettings JSonSettings = new JsonSerializerSettings() { Formatting = Formatting.Indented };
 
         /// <summary>
-        /// Private constructor, for internal use only
+        /// Collection of Rule objects contained in this store.
+        /// </summary>
+        public IList<Rule> Rules;
+
+        /// <summary>
+        /// Private constructor, for internal use only.
+        /// RuleStores should be acquired by calling Open() or Create().
         /// </summary>
         /// <param name="dataFilePath">Path of the file holding the encrypted JSon rules</param>
         /// <param name="key">Key to (de/en)crypt the file</param>
+        /// <param name="rules">Optional collection of rules to immidiatly add to this store.</param>
         private RuleStore(string dataFilePath, string key, IEnumerable<Rule> rules = null) {
             DataFilePath = dataFilePath;
             Key = key;

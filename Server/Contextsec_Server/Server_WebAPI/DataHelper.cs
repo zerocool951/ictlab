@@ -17,8 +17,9 @@ namespace Server_WebAPI {
 
         private long UpdateFrequencyMs;
         private long LastRulestoreUpdate;
-        
+
         private static DataHelper instance;
+
         /// <summary>
         /// Singleton instance of DataHelper class
         /// Will be null when for some reason unable to open/read DataStore
@@ -42,6 +43,7 @@ namespace Server_WebAPI {
         }
 
         private Rule[] allRules;
+
         /// <summary>
         /// Provides access to all the rules in configured datastore file
         /// </summary>

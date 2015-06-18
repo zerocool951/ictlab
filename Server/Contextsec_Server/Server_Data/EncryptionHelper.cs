@@ -20,7 +20,7 @@ namespace Server_Data {
         /// <summary>
         /// Encrypts a string using Rijndael's algorithm. Can only be decrypted by this class because salt stored here.
         /// </summary>
-        public static string Encrypt(string text, string key) {
+        internal static string Encrypt(string text, string key) {
             byte[] textToBytes = Encoding.UTF8.GetBytes(text);
             using (var password = new PasswordDeriveBytes(key, null)) {
                 byte[] keyBytes = password.GetBytes(keysize / 8);
@@ -43,7 +43,7 @@ namespace Server_Data {
         /// <summary>
         /// Decrypts a string encrypted by this class.
         /// </summary>
-        public static string Decrypt(string text, string key) {
+        internal static string Decrypt(string text, string key) {
             byte[] textToBytes = Convert.FromBase64String(text);
             using (PasswordDeriveBytes password = new PasswordDeriveBytes(key, null)) {
                 byte[] keyBytes = password.GetBytes(keysize / 8);
