@@ -6,7 +6,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import org.json.*;
-import java.io.IOException;
+
 import java.util.ArrayList;
 import nl.AndroidClient.ictlab.R;
 
@@ -16,6 +16,8 @@ import nl.AndroidClient.ictlab.R;
  */
 public class ContextRuleManager {
     private static final String urlSuffix = "/api/Rule";
+    //TODO set allow self-signed certificate to FALSE, use TRUE for testing purposes only!
+    private static final Boolean allowSelfSigendCertificates = true;
 
     private static RuleManagerStatus status = RuleManagerStatus.NOTSTARTED;
     private static Exception thrownException;
@@ -115,10 +117,10 @@ public class ContextRuleManager {
 
             try {
                 String text;
-                text = HttpHelper.getHttpRequestText(params[0]);
+                text = HttpHelper.getHttpRequestText(params[0], allowSelfSigendCertificates);
                 Log.d("ContextSec_RuleMgr", "Gotten Http text");
                 return text;
-            } catch (IOException e) {
+            } catch (Exception e) {
                 Log.e("ContextSec_RuleMgr", "Get from webapi failed: " + e);
                 thrownException = e;
                 status = RuleManagerStatus.ERROR;

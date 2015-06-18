@@ -8,5 +8,6 @@
     <string name="vpn_connected">Connected</string>
     <string name="vpn_disconnect">Disconnect</string>
 
-    <string name="rules_webapi_address">http://192.168.2.64:2303</string>
+    <!--<string name="rules_webapi_address">http://192.168.2.64:2303</string>-->
+    <string name="rules_webapi_address">https://192.168.2.64:44300</string>
 </resources>
